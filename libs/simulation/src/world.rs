@@ -9,8 +9,8 @@ pub struct World {
 
 impl World {
     pub fn random(rng:&mut dyn RngCore) -> Self {
-        const NUM_OF_ANIMALS: usize = 40;
-        const NUM_OF_FOOD: usize = 60;
+        const NUM_OF_ANIMALS: usize = 10;
+        const NUM_OF_FOOD: usize = 20;
 
         let animals = (0..NUM_OF_ANIMALS)
             .map(|_| Animal::random(rng))
