@@ -1,8 +1,8 @@
 # evol_sim
 
-evol_sim is a simulation of evolution that uses genetic algorithm and neural network implemented from scratch to simulate the evolution of birds and display it in the browser through WebAssembly. Currently, it utilizes the Roulette Method for Selection, the Gaussian Method for Mutation, and Uniform Crossover.
+evol_sim is a Rust program that uses genetic algorithm and neural network implemented from scratch to simulate the evolution of birds and display it in the browser through WebAssembly. Currently, it utilizes the Roulette Method for Selection, the Gaussian Method for Mutation, and Uniform Crossover.
 
-Future objectives:
+# Future objectives:
 
 -> Improve the user interface, adding the changes Patryk made to his project
 -> Implement other selection methods, such as the rank method
@@ -22,3 +22,5 @@ Licensed under the MIT license.
 # Author
 
 Diogo Tandeta Tartarotti
+
+diogo.tartarotti@gmail.com
