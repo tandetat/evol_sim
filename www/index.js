@@ -1,13 +1,15 @@
 import * as sim from "lib-simulation-wasm";
 
-const simulation = new sim.Simulation();
+let simulation = new sim.Simulation();
 
+document.getElementById('train').onclick = () => {
+    console.log(simulation.train());
+}
 const viewport = document.getElementById('viewport');
+const viewportScale = window.devicePixelRatio || 1;
 const viewportWidth = viewport.width;
 const viewportHeight = viewport.height;
 
-
-const viewportScale = window.devicePixelRatio || 1;
 
 viewport.width = viewportWidth * viewportScale;
 viewport.height = viewportHeight * viewportScale;
@@ -64,15 +66,17 @@ CanvasRenderingContext2D.prototype.drawCircle =
 function redraw() {
         context.clearRect(0, 0, viewportWidth, viewportHeight);
 
+        const scale = 0.01;
+        const ratio = (scale/ 2.0)
 
         const world = simulation.world();
         simulation.step();
-        
+
         for (const animal of simulation.world().animals) {
             context.drawTriangle(
                 animal.x * viewportWidth,
                 animal.y * viewportHeight,
-                0.01 * viewportWidth,
+                scale * viewportWidth,
                 animal.rotation,
             );
         }
@@ -84,7 +88,7 @@ function redraw() {
             context.drawCircle(
                 food.x * viewportWidth,
                 food.y * viewportHeight,
-                (0.01 / 2.0) * viewportWidth,
+                ratio * viewportWidth,
             );
         }
 }

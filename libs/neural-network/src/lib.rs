@@ -1,11 +1,14 @@
 use rand::{Rng, RngCore};
+
+#[derive(Debug)]
 pub struct Network{
     layers: Vec<Layer>,
 }
-
+#[derive(Debug)]
 struct Layer{
     neurons: Vec<Neuron>,
 }
+#[derive(Debug)]
 struct Neuron{
     bias: f32,
     weights: Vec<f32>,
@@ -33,6 +36,43 @@ impl Network{
         .collect(),
        } 
     }
+
+    pub fn weights(&self) -> impl Iterator<Item = f32> + '_ {
+        use std::iter::once;
+
+        self.layers
+            .iter()
+            .flat_map(|layer| layer.neurons.iter())
+            .flat_map(|neuron| once(&neuron.bias).chain(&neuron.weights))
+            .cloned()
+    }
+
+    pub fn from_weights(
+        layers: &[LayerTopology],
+        weights: impl IntoIterator<Item = f32>,
+    ) -> Self {
+        assert!(layers.len() > 1); //precondition
+
+        let mut weights = weights.into_iter();
+
+        let layers = layers
+            .windows(2)
+            .map( |layers| {
+                Layer::from_weights(
+                    layers[0].neurons,
+                    layers[1].neurons,
+                    &mut weights,
+                )
+            })
+            .collect();
+
+            if weights.next().is_some(){
+                panic!("Too many weights!");
+            }
+    
+            Self { layers }
+
+    }
 }
 
 impl Layer {
@@ -50,6 +90,19 @@ impl Layer {
             .collect(),
          }
     }
+
+    pub fn from_weights(
+        input_size: usize,
+        output_size: usize,
+        weights: &mut dyn Iterator<Item = f32>,
+    ) -> Self {
+        let neurons = (0..output_size)
+            .map(|_| Neuron::from_weights(input_size, weights))
+            .collect();
+
+        Self { neurons }
+    }
+
 }
 
 impl Neuron{
@@ -71,6 +124,19 @@ impl Neuron{
         Self {bias, weights: (0..input).
         map(|_| rng.gen_range(-1.0..=1.0))
         .collect(),}
+    }
+
+    pub fn from_weights(
+        input_size: usize,
+        weights: &mut dyn Iterator<Item = f32>,
+    ) -> Self {
+        let bias = weights.next().expect("Not enough weights");
+
+        let weights = (0..input_size)
+            .map(|_| weights.next().expect("Not enough weights"))
+            .collect();
+
+        Self { bias, weights }
     }
 }
 #[cfg(test)]

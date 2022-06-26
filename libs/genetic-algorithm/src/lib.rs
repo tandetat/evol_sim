@@ -27,7 +27,7 @@ where
     pub fn iterate<I>(&self, 
         population: &[I],
         rng: &mut dyn RngCore,
-    )-> Vec<I>
+    )-> (Vec<I>, Statistics)
     where
         I: Individual,
     {
@@ -36,8 +36,8 @@ where
 
         assert!(!population.is_empty());
 
-        (0..population.len())
-        .map(|_| {
+        let new_pop = (0..population.len())
+            .map(|_| {
                 let parent_a = self
                     .selection_method
                     .select(population, rng);
@@ -49,13 +49,17 @@ where
                 let chromosome_b = parent_b.chromosome();
 
                 let mut child = self
-                                .crossover_method
-                                .crossover(rng, chromosome_a, chromosome_b);
+                     .crossover_method
+                     .crossover(rng, chromosome_a, chromosome_b);
 
                 self.mutation_method.mutate(rng, &mut child);
                 I::create(child)
-        })
-        .collect()
+            })
+          .collect();
+
+          let stats = Statistics::new(population);
+
+          (new_pop, stats)
     }
 }
 
@@ -219,6 +223,66 @@ impl SelectionMethod for RouletteWheelSelection {
     }
 }
 
+#[derive(Clone, Debug)]
+pub struct Statistics {
+    min_fit: f32,
+    max_fit: f32,
+    avg_fit: f32,
+}
+impl Statistics {
+    fn new<I>(pop: &[I]) -> Self 
+    where
+        I:Individual,
+    {
+        assert!(!pop.is_empty());
+
+        let mut min_fit = pop[0].fitness();
+        let mut max_fit = min_fit;
+        let mut sum_fit = 0.0;
+
+        for indiv in pop {
+            let fitness = indiv.fitness();
+
+            min_fit = min_fit.min(fitness);
+            max_fit = max_fit.max(fitness);
+            sum_fit += fitness;
+        }
+
+        Self {
+            min_fit,
+            max_fit,
+            avg_fit: sum_fit / (pop.len() as f32),
+        }
+    }
+
+    pub fn min_fitness(&self) -> f32 {
+        self.min_fit
+    }
+
+    pub fn max_fitness(&self) -> f32 {
+        self.max_fit
+    }
+
+    pub fn avg_fitness(&self) -> f32 {
+        self.avg_fit
+    }
+}
+// Testing Part
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
 #[cfg(test)]
 #[derive(Clone, Debug, PartialEq)]
 pub enum TestIndiv {
@@ -349,7 +413,7 @@ mod testing {
             individual(&[1.0, 2.0, 4.0]), // fitness = 7.0
         ];
         for _ in 0..10 {
-            population = ga.iterate( &population, &mut rng,);
+            // population = ga.iterate( &population, &mut rng);
         }
 
         let expected_population = vec![
