@@ -4,10 +4,10 @@ evol_sim is a Rust program that uses genetic algorithm and neural network implem
 
 # Future objectives:
 
--> Improve the user interface, adding the changes Patryk made to his project
--> Implement other selection methods, such as the rank method
--> Implement different crossover methods
--> Possibly move to another GUI (bevy)
+- Improve the user interface, adding the changes Patryk made to his project
+- Implement other selection methods, such as the rank method
+- Implement different crossover methods
+- Possibly move to another GUI (bevy)
 
 # Credits
 
