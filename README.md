@@ -23,4 +23,4 @@ Licensed under the MIT license.
 
 Diogo Tandeta Tartarotti
 
-diogo.tartarotti@gmail.com
+tandetat@grinnell.edu
